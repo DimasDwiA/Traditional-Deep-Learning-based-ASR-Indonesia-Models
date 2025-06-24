@@ -35,7 +35,7 @@ def main(mode='mfcc'):
 
         configs.input_shape = [configs.max_spectrogram_length, configs.n_mfcc]
 
-        configs.save("D:/Project ASR/Model ASR Classic/data/processed/mfcc/configs.yaml")
+        configs.save("D:/Project ASR/Model ASR Classic/configs/configs_mfcc.yaml")
 
     elif mode == 'spectrogram':
         configs = ModelConfigs(mode=mode)
