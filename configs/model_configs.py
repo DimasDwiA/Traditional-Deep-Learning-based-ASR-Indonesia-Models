@@ -6,7 +6,6 @@ from mltu.configs import BaseModelConfigs
 from preprocessing.mfcc_extractor import MFCCExtractor
 from preprocessing.spectrogram_extractor import SpectrogramExtractor
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 os.environ['KAGGLE_CONFIG_DIR'] = os.path.abspath('D:/Project ASR')
 
 
