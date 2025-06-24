@@ -32,7 +32,7 @@ class ModelConfigs(BaseModelConfigs):
         self.learning_rate = tf.keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=1e-4, 
                                                                             decay_steps=10000, 
                                                                             decay_rate=0.9)
-        self.train_epochs = 1
+        self.train_epochs = 300
         self.train_workers = 4
 
         self.mode = mode
