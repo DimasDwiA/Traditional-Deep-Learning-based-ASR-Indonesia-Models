@@ -51,7 +51,7 @@ def main(mode='mfcc'):
 
         configs.input_shape = [configs.max_spectrogram_length, configs.n_mels]
 
-        configs.save("D:/Project ASR/Model ASR Classic/data/processed/spectrogram/configs.yaml")
+        configs.save("D:/Project ASR/Model ASR Classic/configs/configs_spectrogram.yaml")
 
     train_data_provider, val_data_provider, model, history = training(train_dataset, val_dataset, configs, mode)
 
