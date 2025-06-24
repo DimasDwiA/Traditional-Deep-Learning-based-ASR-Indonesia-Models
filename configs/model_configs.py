@@ -23,8 +23,6 @@ class ModelConfigs(BaseModelConfigs):
         self.val_dataset_path = None
 
         self.vocab = "abcdefghijklmnopqrstuvwxyz0123456789'?!,. "
-        self.char_to_num = {c: i+1 for i, c in enumerate(self.vocab)}
-        self.blank_token = 0
 
         self.input_shape = None
         self.max_text_length = None
