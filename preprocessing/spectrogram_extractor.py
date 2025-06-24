@@ -7,10 +7,6 @@ import librosa
 import soundfile as sf
 from tqdm import tqdm
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-os.environ['KAGGLE_CONFIG_DIR'] = os.path.abspath('D:/Project ASR')
-
-
 # Spectrogram extraction in DataProvider
 class SpectrogramExtractor:
     def __init__(self, frame_step, fft_length, n_mels, sr):
