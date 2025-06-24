@@ -6,9 +6,6 @@ from mltu.configs import BaseModelConfigs
 from preprocessing.mfcc_extractor import MFCCExtractor
 from preprocessing.spectrogram_extractor import SpectrogramExtractor
 
-os.environ['KAGGLE_CONFIG_DIR'] = os.path.abspath('D:/Project ASR')
-
-
 # Configuration
 class ModelConfigs(BaseModelConfigs):
     def __init__(self, mode='mfcc'):
