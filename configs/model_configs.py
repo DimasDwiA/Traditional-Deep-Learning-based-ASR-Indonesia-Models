@@ -57,3 +57,8 @@ class ModelConfigs(BaseModelConfigs):
         
         else:
             raise ValueError(f"Unknown mode: {mode}")
+        
+    def load(self, path):
+        with open(path, 'r') as f:
+            data = yaml.safe_load(f)
+        self.__dict__.update(data)
