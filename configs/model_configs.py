@@ -1,5 +1,5 @@
 import os
-import sys
+import yaml
 import tensorflow as tf
 from datetime import datetime 
 from mltu.configs import BaseModelConfigs
