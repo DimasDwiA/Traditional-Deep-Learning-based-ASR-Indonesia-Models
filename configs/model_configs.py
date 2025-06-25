@@ -10,7 +10,7 @@ from preprocessing.spectrogram_extractor import SpectrogramExtractor
 class ModelConfigs(BaseModelConfigs):
     def __init__(self, mode='mfcc'):
         super().__init__()
-        self.model_path = os.path.join("D:/Project ASR/Model ASR Classic/output/model/", datetime.strftime(datetime.now(), "%Y%m%d%H%M"))
+        self.model_path = os.path.join("D:/Project ASR/Model ASR Classic/saving_models/", datetime.strftime(datetime.now(), "%Y%m%d%H%M"))
         os.makedirs(self.model_path, exist_ok=True)
         self.frame_length = 400
         self.frame_step = 512
