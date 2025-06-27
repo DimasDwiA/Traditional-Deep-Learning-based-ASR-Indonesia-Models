@@ -35,6 +35,12 @@ def main(mode='mfcc'):
 
         configs.input_shape = [configs.max_spectrogram_length, configs.n_mfcc]
 
+        configs._feature_extractor_4_yaml = {"type": "MFCCExtractor", "frame_step": configs.frame_step,
+                                             "fft_length": configs.fft_length, "n_mfcc": configs.n_mfcc, "sr": configs.sr}
+
+        configs.learning_rate = {"name": "ExponentialDecay", "initial_learning_rate": 0.00001, 
+                                 "decay_rate": 0.9, "decay_steps": 10000, "staircase": False}
+
         configs.save("D:/Project ASR/Model ASR Classic/configs/configs_mfcc.yaml")
 
     elif mode == 'spectrogram':
