@@ -101,6 +101,15 @@ def training(dataset_train, dataset_val, configs, mode):
 
     else:
         raise ValueError(f"Unknown mode: {mode}")
+    
+    if isinstance(configs.learning_rate, dict) and configs.learning_rate.get("name") == "ExponentialDecay":
+        lr = configs.learning_rate
+        configs.learning_rate = tf.keras.optimizers.schedules.ExponentialDecay(
+            initial_learning_rate=lr["learning_rate"],
+            decay_steps=lr["decay_steps"],
+            decay_rate=lr["decay_rate"],
+            staircase=lr["staircase"]
+        )
         
     model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=configs.learning_rate),
