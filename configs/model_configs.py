@@ -58,7 +58,49 @@ class ModelConfigs(BaseModelConfigs):
         else:
             raise ValueError(f"Unknown mode: {mode}")
         
+    def serializable_dict(self):
+        data = self.__dict__.copy()
+
+        # Change object with the serializable
+        if isinstance(self.feature_extractor, MFCCExtractor):
+            data['feature_extractor'] = {'type' : 'MFCCExtractor', 'frame_step' : self.feature_extractor.frame_step,
+                                    'fft_length' : self.feature_extractor.fft_length, 'n_mfcc' :  self.feature_extractor.n_mfcc,
+                                    'sr' : self.feature_extractor.sr}
+
+        elif isinstance(self.feature_extractor, SpectrogramExtractor):
+            data['feature_extractor'] = {'type' : 'SpectrogramExtractor', 'frame_step' : self.feature_extractor.frame_step,
+                                    'fft_length' : self.feature_extractor.fft_length, 'n_mels' :  self.feature_extractor.n_mels,
+                                    'sr' : self.feature_extractor.sr}
+
+        # Learning rate
+        if isinstance(self.learning_rate, tf.keras.optimizers.schedules.ExponentialDecay):
+            data['learning_rate'] = {'name' : 'ExponentialDecay','learning_rate' : self.learning_rate.initial_learning_rate,
+                                     'decay_steps' : self.learning_rate.decay_steps, 'decay_rate': self.learning_rate.decay_rate,
+                                     'staircase': self.learning_rate.staircase}
+
+        return data
+
+    def save(self, path):
+        with open(path, 'w') as f:
+            yaml.safe_dump(self.serializable_dict(), f)
+
     def load(self, path):
         with open(path, 'r') as f:
             data = yaml.safe_load(f)
         self.__dict__.update(data)
+
+        # Rebuild feature_extractor
+        fe = data.get('feature_extractor')
+        if fe:
+            if fe['type'] == 'MFCCExtractor':
+                fe.pop('type')
+                self.feature_extractor = MFCCExtractor(**fe)
+            elif fe['type'] == 'SpectrogramExtractor':
+                fe.pop('type')
+                self.feature_extractor = SpectrogramExtractor(**fe)
+
+        lr = data.get('learning_rate')
+        if lr and lr.get('name') == 'ExponentialDecay':
+            self.learning_rate = tf.keras.optimizers.schedules.ExponentialDecay(initial_learning_rate=lr["learning_rate"], 
+                                                                                decay_steps=lr["decay_steps"], decay_rate=lr["decay_rate"],
+                                                                                staircase=lr["staircase"])
