@@ -1,6 +1,7 @@
 import soundfile as sf
 import numpy as np
 import tensorflow as tf
+from keras.saving import register_keras_serializable
 
 # Function to save audio file correctly
 def save_audio_file(audio_array, sample_rate, file_path):
@@ -14,5 +15,6 @@ def normalize_audio(audio_array):
     audio_array = audio_array / np.max(np.abs(audio_array))
     return audio_array
 
+@register_keras_serializable
 def expand_dims_layer(x):
     return tf.expand_dims(x, axis=-1)
