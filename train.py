@@ -1,6 +1,5 @@
 import os
 import tensorflow as tf
-from tensorflow.keras.models import load_model
 from mltu.tensorflow.dataProvider import DataProvider
 from mltu.tensorflow.metrics import CERMetric, WERMetric
 from mltu.tensorflow.losses import CTCloss
@@ -42,12 +41,7 @@ def training(dataset_train, dataset_val, configs, mode):
         model_path = os.path.join(configs.model_path, 'model_100epochs.keras')
         if os.path.exists(model_path):
             print(f"Loading model from {model_path}")
-            model = load_model(model_path, custom_objects={
-                "CTCloss" : CTCloss(),
-                "CERMetrics" : CERMetric(vocabulary=configs.vocab),
-                "WERMetrics" : WERMetric(vocabulary=configs.vocab)
-            })
-            initial_epoch = 100
+            model = tf.keras.models.load_model(model_path, compile=False)
         else:
             print("No saved model found, creating a new one.")
             model = train_model_mfcc(
