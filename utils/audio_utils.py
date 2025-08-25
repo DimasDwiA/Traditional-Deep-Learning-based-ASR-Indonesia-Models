@@ -28,6 +28,23 @@ def normalize_audio(audio_array):
     audio_array = audio_array / np.max(np.abs(audio_array))
     return audio_array
 
-@register_keras_serializable
+def augment_audio(audio, sr):
+    # Time stretching
+    if random.random() < 0.5:
+        audio = librosa.effects.time_stretch(audio, rate=random.uniform(0.8, 1.1))  
+
+    # Pitch shifting
+    if random.random() < 0.5:
+        audio = librosa.effects.pitch_shift(audio, sr=sr, n_steps=random.randint(-2, 2))  
+
+    # Add Gaussian noise
+    if random.random() < 0.3:
+        noise_amp = 0.005 * np.random.uniform() * np.amax(audio)
+        audio = audio + noise_amp * np.random.normal(size=audio.shape)  
+
+    audio = np.clip(audio, -1.0, 1.0)
+    return audio
+
+@register_keras_serializable()
 def expand_dims_layer(x):
     return tf.expand_dims(x, axis=-1)
