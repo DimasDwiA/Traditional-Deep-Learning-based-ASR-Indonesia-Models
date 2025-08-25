@@ -7,8 +7,9 @@ from mltu.tensorflow.callbacks import Model2onnx, TrainLogger
 from mltu.transformers import SpectrogramPadding, LabelIndexer, LabelPadding
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from models.model_factory import train_model_mfcc, train_model_spectrogram
+from utils.audio_utils import expand_dims_layer, CTCLossFixed
 
-def training(dataset_train, dataset_val, configs, mode):
+def training(dataset_train, dataset_val, configs, mode, resume=False):
 
     extractor = configs.feature_extractor
     
@@ -48,7 +49,6 @@ def training(dataset_train, dataset_val, configs, mode):
                 input_dim=configs.input_shape,
                 output_dim=len(configs.vocab),
                 dropout=0.3)
-            initial_epoch = 0
         
     elif mode == 'spectrogram':
 
@@ -79,19 +79,14 @@ def training(dataset_train, dataset_val, configs, mode):
         model_path = os.path.join(configs.model_path, 'model_100epochs.keras')
         if os.path.exists(model_path):
             print(f"Loading model from {model_path}")
-            model = load_model(model_path, custom_objects={
-                "CTCloss" : CTCloss(),
-                "CERMetrics" : CERMetric(vocabulary=configs.vocab),
-                "WERMetrics" : WERMetric(vocabulary=configs.vocab)
-            })
-            initial_epoch = 100
+            model = tf.keras.models.load_model(model_path, compile=False, safe_mode=False, 
+                                               custom_objects={'expand_dims_layer': expand_dims_layer})
         else:
             print("No saved model found, creating a new one.")
             model = train_model_spectrogram(
                 input_dim=configs.input_shape,
                 output_dim=len(configs.vocab),
                 dropout=0.3)
-            initial_epoch = 0
 
     else:
         raise ValueError(f"Unknown mode: {mode}")
@@ -107,7 +102,7 @@ def training(dataset_train, dataset_val, configs, mode):
         
     model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=configs.learning_rate),
-    loss=CTCloss(),
+    loss=CTCLossFixed(),
     metrics=[
         CERMetric(vocabulary=configs.vocab),
         WERMetric(vocabulary=configs.vocab)
@@ -122,6 +117,8 @@ def training(dataset_train, dataset_val, configs, mode):
     model2onnx = Model2onnx(f"{configs.model_path}/model.keras")
 
     model.summary(line_length=110)
+
+    initial_epoch = 50 if resume else 0
 
     history = model.fit(train_data_provider, validation_data=val_data_provider, epochs=configs.train_epochs,
                         initial_epoch=initial_epoch, callbacks=[earlystopper, checkpoint, trainLogger, reduceLROnPlat, tb_callback, model2onnx]
